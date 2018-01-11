@@ -43,6 +43,14 @@ namespace :config do
         fetch(:config_files).each do |config|
           local_path = CapistranoUploadConfig::Helpers.get_config_name(config, fetch(:stage).to_s, fetch(:local_base_dir).to_s)
           server_name = use_stage_remotely ? local_path.split('/').last : config
+          
+          unless File.file?(local_path)
+            fallback_path = local_path.sub(".#{fetch(:stage).to_s}", '')
+            if File.file?(fallback_path)
+              local_path = fallback_path
+            end
+          end
+          
           if File.file?(local_path)
             info "Uploading config #{local_path} as #{server_name}"
             upload! StringIO.new(IO.read(local_path)), File.join(shared_path, server_name)
