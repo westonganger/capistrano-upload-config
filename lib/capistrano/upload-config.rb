@@ -11,7 +11,17 @@ module CapistranoUploadConfig
         extension.sub!(/^\./, '')
         local_file = [filename, stage].join('.')
         local_file = [local_file, extension].join('.') unless extension.empty?
-        File.join(path, local_file)
+        
+        file = File.join(path, local_file)
+        
+        unless File.exist?(file)
+          fallback_file = File.join(path, local_file.sub(".#{stage}", ''))
+          if File.exist?(file)
+            file = fallback_file
+          end
+        end
+        
+        return file
       end
 
     end
