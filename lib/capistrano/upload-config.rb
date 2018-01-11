@@ -14,9 +14,10 @@ module CapistranoUploadConfig
         
         file = File.join(path, local_file)
         
-        unless File.exist?(file)
+        unless File.file?(file)
+          puts local_file
           fallback_file = File.join(path, local_file.sub(".#{stage}", ''))
-          if File.exist?(fallback_file)
+          if File.file?(fallback_file)
             file = fallback_file
           end
         end
